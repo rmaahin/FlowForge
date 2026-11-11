@@ -32,7 +32,7 @@ I write all the code myself. Claude provides file/function structure, pseudocode
 | Docker | Docker Desktop `4.99.0`, WSL integration on |
 | ORFS image | `openroad/orfs:____` |
 | Python | 3.__ (pandas, xgboost, scikit-learn, matplotlib, pyyaml) |
-| Project path | `~/FlowForge` (inside WSL filesystem) |
+| Project path | `C:\Users\rmaah\Documents\Projects\FlowForge` |
 
 ## Designs & sweep plan
 
