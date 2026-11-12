@@ -30,9 +30,36 @@ I write all the code myself. Claude provides file/function structure, pseudocode
 | Machine | Lenovo Legion: CPU `24 Cores`, RAM `32 GB` |
 | OS | Windows `11 Home` + WSL2 (Ubuntu `24.04`) |
 | Docker | Docker Desktop `4.99.0`, WSL integration on |
-| ORFS image | `openroad/orfs:____` |
+| ORFS image | `openroad/orfs:sha256:688272c2cca337c25e98437ae0e2dc919f1bb659d8e488427c52d97ae903e507` |
 | Python | 3.__ (pandas, xgboost, scikit-learn, matplotlib, pyyaml) |
 | Project path | `C:\Users\rmaah\Documents\Projects\FlowForge` |
+
+## Daily startup / shutdown
+
+### Start up
+1. **Windows:** start Docker Desktop and wait until it shows "Engine running".
+2. **Open Ubuntu:** Windows Terminal → ⌄ → Ubuntu-24.04.
+3. **Check Docker is reachable:** `docker info > /dev/null && echo docker ok`
+4. **(Python work only)** go to the repo and activate the venv:
+   - `cd /mnt/c/Users/rmaah/Documents/Projects/FlowForge`
+   - `source ~/.venvs/flowforge/bin/activate` → prompt shows `(flowforge)`
+5. **(ORFS work)** start the container from the ORFS clone:
+   - `cd ~/OpenROAD-flow-scripts`
+   - `docker run --rm -it -u $(id -u):$(id -g) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/orfs:latest`
+6. **Inside the container:** set up tool paths, then go to the flow folder:
+   - `source ./env.sh`
+   - `cd flow`
+7. **Verify:** `yosys -help` and `openroad -help` both print help.
+
+### Shut down
+1. Make sure no `make` run is in progress. If you Ctrl+C a run, clean that variant before reusing it (`make DESIGN_CONFIG=... FLOW_VARIANT=... clean_all`).
+2. **Container:** `exit` (`--rm` deletes the container; outputs in `flow/` stay on disk).
+3. **venv:** `deactivate`
+4. **Ubuntu:** `exit`
+5. **PowerShell (optional, frees RAM):** `wsl --shutdown`
+6. **Docker Desktop:** right-click the whale icon in the system tray → Quit Docker Desktop.
+
+---
 
 ## Designs & sweep plan
 
@@ -91,9 +118,13 @@ FlowForge/
 
 | Date | What | Result |
 |---|---|---|
-| | | |
+| 2026-11-11 | gcd nangate45, default settings, first run | real 0m24.950s, peak mem 561 MB (from docker stats) |
 
 ## Open questions
 
 - Which second design: `aes` or `ibex`? (Depends on runtime per run.)
 - Exact clock range per design (find the default period first, then sweep around it).
+
+## Notes
+
+- Everytime I run the ORFS container, I need to run "source ./env.sh" so the PATH is changed.
